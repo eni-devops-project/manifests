@@ -1,0 +1,102 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: todolist
+  name: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:9.4
+          env:
+            - name: MYSQL_RANDOM_ROOT_PASSWORD
+              value: "example"
+            - name: MYSQL_DATABASE
+              value: "todolist_db"
+          envFrom:
+            - secretRef:
+                name: db-secret
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+            - name: mysql-initdb
+              mountPath: /docker-entrypoint-initdb.d
+      volumes:
+        - name: mysql-data
+          persistentVolumeClaim:
+            claimName: mysql-data
+        - name: mysql-initdb
+          configMap:
+            name: mysql-initdb
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: todolist
+  name: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: ghcr.io/eni-devops-project/backend:1.0.0
+          env:
+            - name: DB_HOST
+              value: "db"
+            - name: DB_DIALECT
+              value: "mysql"
+            - name: DB_PORT
+              value: "3306"
+            - name: PORT
+              value: "3000"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: MYSQL_PASSWORD
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: MYSQL_USER
+          ports:
+            - containerPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: todolist
+  name: frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: ghcr.io/eni-devops-project/frontend:1.0.15
+          ports:
+            - containerPort: 80
+---
