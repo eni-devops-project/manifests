@@ -30,7 +30,7 @@
       - host: eni.curieux.org
         http:
           paths:
-            - pathType: ImplementationSpecific
+            - pathType: Prefix
               backend:
                 service:
                   name: frontend
