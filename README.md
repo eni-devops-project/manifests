@@ -22,3 +22,15 @@ helm install ingress-nginx ingress-nginx/ingress-nginx \
 ```
 
 # Installing cert manager
+
+```
+helm upgrade \
+  cert-manager oci://quay.io/jetstack/charts/cert-manager \
+  --version v1.18.2 \
+  --namespace cert-manager \
+  --create-namespace \
+  --set crds.enabled=true \
+  --set config.featureGates.ACMEHTTP01IngressPathTypeExact=false
+```
+
+Last option is set due to a bug in ingress nginx prefix/exact path types.

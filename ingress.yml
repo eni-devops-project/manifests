@@ -1,26 +1,32 @@
 ---
-  apiVersion: networking.k8s.io/v1
-  kind: Ingress
-  metadata:
-    name: todolist
-    namespace: todolist
-  spec:
-    ingressClassName: nginx
-    rules:
-      - host: eni.curieux.org
-        http:
-          paths:
-            - pathType: Prefix
-              backend:
-                service:
-                  name: frontend
-                  port:
-                    number: 8080
-              path: /
-            - pathType: Prefix
-              backend:
-                service:
-                  name:  backend
-                  port:
-                    number: 3000
-              path: /api
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: todolist
+  namespace: todolist
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-production
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: eni.curieux.org
+      http:
+        paths:
+          - pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 8080
+            path: /
+          - pathType: Prefix
+            backend:
+              service:
+                name:  backend
+                port:
+                  number: 3000
+            path: /api
+  tls:
+  - hosts:
+    - eni.curieux.org
+    secretName: ca-todolist-tls
