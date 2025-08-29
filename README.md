@@ -41,4 +41,3 @@ Last option is set due to a bug in ingress nginx prefix/exact path types.
 - kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 - get the password from the secret generated
 - portforward on the ui and connect
-- 
