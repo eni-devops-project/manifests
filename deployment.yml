@@ -96,7 +96,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ghcr.io/eni-devops-project/frontend:1.0.14
+          image: ghcr.io/eni-devops-project/frontend:1.0.15
           ports:
             - containerPort: 80
 ---
