@@ -34,3 +34,11 @@ helm upgrade \
 ```
 
 Last option is set due to a bug in ingress nginx prefix/exact path types.
+
+# Installing argo cd to do gitops
+
+- kubectl create namespace argocd
+- kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+- get the password from the secret generated
+- portforward on the ui and connect
+- 
